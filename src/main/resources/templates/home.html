@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header.admin-nav {
+            background-color: #d35400; /* Different color for admins */
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+        }
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            background-color: #3498db;
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+        }
+        .hero p {
+            font-size: 1.25rem;
+        }
+        .hero a {
+            text-decoration: none;
+            background-color: #2980b9;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+        .hero a:hover {
+            background-color: #1c6d9a;
+        }
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            flex: 1 1 calc(33% - 3rem);
+            min-width: 250px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .feature-card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .feature-card p {
+            color: #555;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<header th:classappend="${#authorization.expression('hasAuthority(''ADMIN'')') ? 'admin-nav' : ''}">
+    <nav>
+        <a href="/">Home</a>
+        <a href="/devices">Devices</a>
+        <a sec:authorize="isAuthenticated()" href="/yourorder">Your Orders</a>
+        <a sec:authorize="isAuthenticated()" href="/account">Account</a>
+        <a sec:authorize="!isAuthenticated()" class="nav-item" th:href="@{/login}">Login</a>
+        <a sec:authorize="!isAuthenticated()" class="nav-item" th:href="@{/register}">Register</a>
+        <a sec:authorize="hasAuthority('ADMIN')" href="/device-upload">Device Upload</a>
+        <a sec:authorize="hasAuthority('ADMIN')" href="/user-panel">User Panel</a>
+        <a sec:authorize="hasAuthority('ADMIN')" href="/device-panel">Device Panel</a>
+        <a sec:authorize="isAuthenticated()" th:href="@{/logout}">Logout</a>
+    </nav>
+</header>
+<main>
+    <div class="hero">
+        <h1>Welcome to Kopuz Shop</h1>
+        <p>Find the best devices for your needs</p>
+        <a href="/devices">Shop Now</a>
+    </div>
+    <div class="features">
+        <div class="feature-card">
+            <h2>Wide Selection</h2>
+            <p>Choose from a wide variety of devices that suit your needs and budget.</p>
+        </div>
+        <div class="feature-card">
+            <h2>Secure Payment</h2>
+            <p>Our payment methods are secure and easy to use, ensuring your safety and convenience.</p>
+        </div>
+        <div class="feature-card">
+            <h2>Fast Delivery</h2>
+            <p>Enjoy fast and reliable delivery service, getting your devices to you in no time.</p>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2024 Shop. All rights reserved.</p>
+</footer>
+</body>
+</html>

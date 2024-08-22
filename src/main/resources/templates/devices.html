@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Device List</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        header.admin-nav {
+            background-color: #d35400; /* Different color for admins */
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #e74c3c;
+        }
+
+        main {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .device-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 250px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .device-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .device-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .device-card h2 {
+            font-size: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .device-card p {
+            color: #555;
+            margin: 0 1rem;
+            font-size: 0.875rem;
+        }
+
+        .device-card .price {
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 1rem;
+        }
+
+        .add-to-basket {
+            background-color: #6a7b8f;
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+            text-decoration: none;
+            display: block;
+            width: calc(100% - 2rem);
+            margin: 0 1rem 1rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-to-basket:hover {
+            background-color: #6a7b8f;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            position: absolute;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<header th:classappend="${#authorization.expression('hasAuthority(''ADMIN'')') ? 'admin-nav' : ''}">
+    <nav>
+        <a href="/">Home</a>
+        <a href="/devices">Devices</a>
+        <a sec:authorize="isAuthenticated()" href="/yourorder">Your Orders</a>
+        <a sec:authorize="isAuthenticated()" href="/account">Account</a>
+        <a sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link me-3 btn btn-primary" th:href="@{/login}">Login</a></a>
+        <a sec:authorize="!isAuthenticated()" class="nav-item"><a class="nav-link btn btn-primary" th:href="@{/register}">Register</a></a>
+        <a sec:authorize="hasAuthority('ADMIN')" href="/device-upload">Device Upload</a>
+        <a sec:authorize="hasAuthority('ADMIN')" href="/user-panel">User Panel</a>
+        <a sec:authorize="hasAuthority('ADMIN')" href="/device-panel">Device Panel</a>
+        <a sec:authorize="isAuthenticated()" class="dropdown-item" th:href="@{/logout}">Logout</a>
+
+    </nav>
+</header>
+<main>
+    <h1>Devices Available</h1>
+    <div class="container">
+        <div th:each="device : ${devices}" class="device-card">
+            <img th:src="@{${device.imageUrl}}" alt="Image of [[${device.name}]]" />
+            <h2 th:text="${device.name}">Device Name</h2>
+            <p th:text="${device.description}">Device Description</p>
+            <div class="price" th:text="${device.price} + 'TL'">Price</div>
+
+            <!-- Form to pass device information -->
+            <form th:action="@{/basket}" method="post">
+                <input type="hidden" name="deviceId" th:value="${device.id}" />
+                <input type="hidden" name="deviceName" th:value="${device.name}" />
+                <input type="hidden" name="devicePrice" th:value="${device.price}" />
+                <input type="hidden" name="deviceStock" th:value="${device.stock}" />
+                <input sec:authorize="isAuthenticated()" type="submit" class="add-to-basket" value="🛒 Add to Basket" />
+            </form>
+        </div>
+    </div>
+</main>
+<footer>
+    <p>&copy; 2024 Shop. All rights reserved.</p>
+</footer>
+</body>
+</html>
